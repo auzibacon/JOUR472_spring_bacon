@@ -203,7 +203,7 @@ umd_courses |>
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? **Answer: Both codeblocks are organized in descending order's number of seats, so the top terms have that in common. However, there are additional columns that the table is sorted by now, including the mean/median of seats per term.**
 
 ### Task 14: more aggregations
 
