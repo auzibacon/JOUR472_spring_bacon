@@ -217,15 +217,15 @@ umd_courses |>
     total_seats = sum(seats),
     mean_seats = mean(seats),
     median_seats = median(seats),
-    # add minimum seats here
-    # add maximum seats here
+    min_seats = min(seats),
+    max_seats = max(seats)
   ) |>
   arrange(desc(total_seats))
 ```
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted?
 
-**Answer**
+**Answer: This specifically arranges the data by number of classes and department, so the department with the most classes is organized at the top. It also adds minimum and maximum seats but this does not affect how it is organized or arranged.**
 
 ### Task 12: Questions
 
