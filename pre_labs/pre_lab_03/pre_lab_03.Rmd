@@ -82,6 +82,7 @@ Let's now look at **gaps in data**. These often occur when you have a date or ti
 **Task** Run the following codeblock to load Maryland state government grant and loan data
 
 ```{r}
+
 md_grants_loans <- read_csv("data/State_of_Maryland_Grant_and_Loan_Data__FY2009_to_FY2022.csv")
 ```
 
