@@ -96,4 +96,4 @@ overdose_calls |>
 
 Q4. What's the best story idea or question you've seen as a result of the work you've done in this lab?
 
-A4.
+A4. I want to know the breakdown of these locations by Baltimore City neighborhoods and their proximity to recovery centers in the neighborhood. I think pointing out the status of community centers aimed at recovery would be interesting based on where most of these calls are coming from.

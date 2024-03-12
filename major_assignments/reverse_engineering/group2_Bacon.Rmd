@@ -66,7 +66,7 @@ In this notebook, we are reverse engineering five sentences from the story.
 # Display results of code below this codeblock
 
 public_enrollment |>
-  filter(!is.na(|>
+  filter(!is.na())|>
   group_by(sch_year) |>
   summarize(pub_enrollment = sum(enrollment))
 
