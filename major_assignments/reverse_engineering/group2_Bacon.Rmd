@@ -25,9 +25,13 @@ In this notebook, we are reverse engineering the story, [STORY NAME](STORY%20URL
 Loading required libraries for this analysis.
 
 ```{r echo=FALSE, message=FALSE}
+
+library(readxl)
 library(lubridate)
 library(tidyverse)
 library(janitor)
+
+
 
 ```
 
@@ -45,6 +49,9 @@ public_enrollment <- read_csv("data/public-enrollment-by-grade.csv")|>
   clean_names() 
 private_enrollment <- read_csv("data/private-enrollment-by-grade.csv")|>
   clean_names() 
+
+
+missing_kids_summary <- read_excel("data/Missing-Kids-Summary-File.xlsx")
 
 # Clean required data and prepare for analysis if needed. 
 
@@ -66,35 +73,46 @@ In this notebook, we are reverse engineering five sentences from the story.
 # Display results of code below this codeblock
 
 public_enrollment |>
-  filter(!is.na())|>
+  filter(!is.na(enrollment))|>
   group_by(sch_year) |>
   summarize(pub_enrollment = sum(enrollment))
-
-
-
 
 ```
 
 ### Sentence 2
 
--   **Sentence text**: [Paste in sentence to engineer here]
--   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: California alone showed over 150,000 missing students in the data, and New York had nearly 60,000
+-   **Analysis summary**: In this case, California shows 541,856 missing students from the 2019-2020 school year to the 2021-2022 school year. New York shows 264,796 missing students from these school years in the updated data.
 
 ```{r}
 # Put code to reverse engineer sentence here
+public_enrollment |>
+  filter(state == 'CALIFORNIA') |>
+  group_by(sch_year) |>
+    summarize(total_enrollment = sum(enrollment)) |>
+  summarize(enrollment_change = ((max(total_enrollment)) - (min(total_enrollment))))
 
+
+public_enrollment |>
+  filter(state == 'NEW YORK') |>
+  group_by(sch_year) |>
+    summarize(total_enrollment = sum(enrollment)) |>
+  summarize(enrollment_change = ((max(total_enrollment)) - (min(total_enrollment))))
 # Display results of code below this codeblock
 
 ```
 
 ### Sentence 3
 
--   **Sentence text**: [Paste in sentence to engineer here]
--   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: That leaves an **estimated 230,000 students** still unaccounted for in the data.
+-   **Analysis summary**: When looking at the population by school age, from Fall 2021 to Spring 2020, we see a 238,000 population decrease. This confirms their finding but originally it did not seem that this dataset would be the best to showcase this change of school-aged students who may be unaccounted for. The data does not specifically say all of these students are not enrolled in school, so it remains somewhat unclear if it is best for showing their findings.
 
 ```{r}
 # Put code to reverse engineer sentence here
 
+pop_age |>
+  group_by(est_date) |>
+  summarize(school_age_pop = sum(population))
 # Display results of code below this codeblock
 
 ```
@@ -106,7 +124,6 @@ public_enrollment |>
 
 ```{r}
 # Put code to reverse engineer sentence here
-
 # Display results of code below this codeblock
 
 ```
