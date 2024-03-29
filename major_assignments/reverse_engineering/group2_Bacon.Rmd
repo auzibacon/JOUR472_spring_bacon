@@ -1,7 +1,7 @@
 ---
 title: "Reverse Engineering Project"
-author: "Student names here"
-date: "Date here"
+author: "Auzinea Bacon, Sarah Meador, Mauriah Allen"
+date: "3/28/24"
 output:
   html_document:
     theme: cerulean
@@ -73,16 +73,20 @@ In this notebook, we are reverse engineering five sentences from the story.
 # Display results of code below this codeblock
 
 public_enrollment |>
-  filter(!is.na(enrollment))|>
+  filter(enrollment >= 0)|>
   group_by(sch_year) |>
-  summarize(pub_enrollment = sum(enrollment))
+  summarize(pub_enrollment = sum(enrollment))|>
+
+#subtract the years of enrollment
+
+summarise(enrollment_change = (max(pub_enrollment)) - (min(pub_enrollment)))
 
 ```
 
 ### Sentence 2
 
--   **Sentence text**: California alone showed over 150,000 missing students in the data, and New York had nearly 60,000
--   **Analysis summary**: In this case, California shows 541,856 missing students from the 2019-2020 school year to the 2021-2022 school year. New York shows 264,796 missing students from these school years in the updated data.
+-   **Sentence text**: California alone showed over 150,000 missing students in the data, and New York had nearly 60,000.
+-   **Analysis summary**: In my analysis, I came to the conclusion that in my updated version of the data, California shows 541,856 missing students from the 2019-2020 school year to the 2021-2022 school year. New York shows 264,796 missing students from these school years in the updated data.
 
 ```{r}
 # Put code to reverse engineer sentence here
@@ -109,21 +113,40 @@ public_enrollment |>
 
 ```{r}
 # Put code to reverse engineer sentence here
+#private_enrollment <- private_enrollment|>
+ # rename(st = state)
+   
+
+enrollment_totals <- public_enrollment |>
+  # join md10 to md21 using the shared GEOID and NAME columns
+  inner_join(private_enrollment, by=c('st', 'grade', 'sch_year'))|>
+mutate(total_enrollment = enrollment.x + enrollment.y)
+
+
+
+enrollment_totals |> 
+  filter(str_detect(grade, "total"))|>
+  group_by(sch_year)|>
+  summarise(enrollment = sum(total_enrollment)) |>
+  arrange(desc(sch_year))
+
 
 pop_age |>
   group_by(est_date) |>
   summarize(school_age_pop = sum(population))
 # Display results of code below this codeblock
-
 ```
 
 ### Sentence 4
 
--   **Sentence text**: [Paste in sentence to engineer here]
--   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: In Los Angeles last year, nearly half of students were chronically absent, meaning they missed more than 10% of the school year.
+-   **Analysis summary**:
 
 ```{r}
 # Put code to reverse engineer sentence here
+
+
+
 # Display results of code below this codeblock
 
 ```
