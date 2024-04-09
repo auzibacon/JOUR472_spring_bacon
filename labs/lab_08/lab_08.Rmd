@@ -141,23 +141,21 @@ calls_by_zip <- pg_911_calls|>
   summarise(total_calls = n())
 
 md_zcta_pop <- get_acs(geography = "zcta",
-              variables = c(medage = "B09021_001"),
+              variables = c(medinc = "B19013_001"),
               state = "MD",
-              year = 2019)|>
-   arrange(desc(estimate))
+              year = 2019)
 
 
 pg_zip_overdose <- calls_by_zip |>
   inner_join(md_zcta_pop, by=c('zipcode' = 'GEOID'))
 
 
-
 pg_zip_overdose |>
   ggplot() + 
-  geom_point(aes(x=estimate, y=total_calls, label = rownames(zipcode)))+
-  geom_text() +
-  labs(title="Zipcode overdose calls shown by 2019 Median Household Incomes", 
+  geom_point(aes(x=estimate, y=total_calls))+
+  labs(title="Wealthier areas in PG County have fewer overdose calls", 
        y="Total Calls", 
        x="Median Household Income", 
-       caption = "Source: Prince George\'s County EMS and United States Census Bureau") 
+       caption = "Source: Prince George\'s County EMS and United States Census Bureau") +
+  geom_text(aes(x=estimate, y=total_calls, label = zipcode), check_overlap = TRUE) 
 ```

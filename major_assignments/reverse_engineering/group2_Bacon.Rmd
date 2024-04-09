@@ -75,11 +75,11 @@ In this notebook, we are reverse engineering five sentences from the story.
 public_enrollment |>
   filter(enrollment >= 0)|>
   group_by(sch_year) |>
-  summarize(pub_enrollment = sum(enrollment))|>
+  summarize(pub_enrollment = sum(enrollment))
 
 #subtract the years of enrollment
 
-summarise(enrollment_change = (max(pub_enrollment)) - (min(pub_enrollment)))
+#summarise(enrollment_change = (max(pub_enrollment)) - (min(pub_enrollment)))
 
 ```
 
@@ -90,18 +90,21 @@ summarise(enrollment_change = (max(pub_enrollment)) - (min(pub_enrollment)))
 
 ```{r}
 # Put code to reverse engineer sentence here
-public_enrollment |>
+california_enrollment <- public_enrollment |>
   filter(state == 'CALIFORNIA') |>
   group_by(sch_year) |>
-    summarize(total_enrollment = sum(enrollment)) |>
-  summarize(enrollment_change = ((max(total_enrollment)) - (min(total_enrollment))))
+    summarize(total_enrollment = sum(enrollment)) 
+#  summarize(enrollment_change = ((max(total_enrollment)) - (min(total_enrollment))))
 
 
-public_enrollment |>
+NY_enrollment <- public_enrollment |>
   filter(state == 'NEW YORK') |>
   group_by(sch_year) |>
-    summarize(total_enrollment = sum(enrollment)) |>
-  summarize(enrollment_change = ((max(total_enrollment)) - (min(total_enrollment))))
+    summarize(total_enrollment = sum(enrollment)) 
+ # summarize(enrollment_change = ((max(total_enrollment)) - (min(total_enrollment))))
+
+
+write_csv(california_enrollment, "chart_enrollment.csv")
 # Display results of code below this codeblock
 
 ```
