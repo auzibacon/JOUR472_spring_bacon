@@ -28,6 +28,7 @@ Loading required libraries for this analysis.
 
 library(tidyverse)
 library(tidycensus)
+library(janitor)
 ```
 
 ## Load and Cleaning Data
@@ -42,7 +43,7 @@ In this section, describe the source of the data, write a basic data dictionary 
 # Clean required data and prepare for analysis if needed. 
 
 
-game_reviews <- read_csv2("Data/bgg_dataset.csv")
+game_reviews <- read_csv2("Data/bgg_dataset.csv")|> clean_names()
 
 
 ```
@@ -77,23 +78,32 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 3
 
--   **Sentence text**: min/max=1 and max \>= 2. Are singleplayer or multiplayer games more reviewed?
--   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
+-   **Sentence text**: Are singleplayer or multiplayer games more reviewed?
+-   **Analysis summary**: Singleplayer games have fewer reviews than multiplayer games, as shown by the \# of Ratings column below. There are 168,000 more reviews for multiplayer games than singleplayer games. However, there is also a much larger number of multiplayer games overall when compared to singleplayer - there are less than 500 singleplayer games in the review list.
 
 ```{r}
-# Put code to reverse engineer sentence here
+# This code shows the number of reviews for games that are considered multiplayer (2 or more players) compared to those that are considered singleplayer (no more than 1 player)
 
-game_reviews |>
-  group_by( )|>
+game_reviews <- game_reviews |>
+  #Code for singleplayer or multiplayer
+  mutate(
+    player_type = case_when(
+      #This does not account for games where the maximum players is less than 0 because some have a min_players that is more than 1. 
+     max_players == 1~ "Singleplayer",
+     max_players >= 2 ~ "Multiplayer",
+        .default = NA
+      )
+  )
+#Group by player type and count the number of ratings. Also, a sum of the number of games considered multiplayer and singleplayer for context. 
+game_reviews |> group_by(player_type)|>
+  summarise("# of Ratings" = sum(users_rated), "# of Games" = n())
   
-
-# Display results of code below this codeblock
 
 ```
 
 ### Sentence 4
 
--   **Sentence text**: What age groups are
+-   **Sentence text**: What is the average number of games by age group?
 -   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
