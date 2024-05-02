@@ -58,9 +58,24 @@ In this notebook, we are reverse engineering five sentences from the story.
 -   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
-# Put code to reverse engineer sentence here
+board_game_ages <- board_game_data |>
+mutate(
+age_groups = case_when(
+between(min_age, 1, 5) ~ '1-5',
+between(min_age, 6, 12) ~ '6-12',
+between(min_age, 13, 17) ~ '13-17',
+min_age >= 18 ~ '18+',
+.default = 'N/A'
+)
+)
 
-# Display results of code below this codeblock
+board_game_ages |>
+group_by(age_groups) |>
+summarise(
+total_games = n()
+) |>
+filter(age_groups != 'N/A') |>
+arrange(desc(total_games))
 
 ```
 
@@ -79,31 +94,32 @@ In this notebook, we are reverse engineering five sentences from the story.
 ### Sentence 3
 
 -   **Sentence text**: Are singleplayer or multiplayer games more reviewed?
--   **Analysis summary**: Singleplayer games have fewer reviews than multiplayer games, as shown by the \# of Ratings column below. There are 168,000 more reviews for multiplayer games than singleplayer games. However, there is also a much larger number of multiplayer games overall when compared to singleplayer - there are less than 500 singleplayer games in the review list.
+-   **Analysis summary**: Singleplayer games have fewer reviews than multiplayer games, as shown by the total ratings column below. There are about 168,000 more reviews for multiplayer games than singleplayer games. However, there is also a much larger number of multiplayer games overall when compared to singleplayer - there are less than 500 singleplayer games in the review list. This means that there are statistically more opportunities to review multiplayer games than singleplayer and, potentially, groups involved in playing multiplayer games may individually leave multiple reviews for those games, resulting in many more ratings for those games than singleplayers. We calculated an average number of ratings to account for this difference, showing multiplayer games on average have a higher number of ratings.
 
 ```{r}
 # This code shows the number of reviews for games that are considered multiplayer (2 or more players) compared to those that are considered singleplayer (no more than 1 player)
 
 game_reviews <- game_reviews |>
-  #Code for singleplayer or multiplayer
+  #Creating a new column for total players that will determine if player count can not be more than 1.
+  mutate(total_players = min_players + max_players)|>
   mutate(
     player_type = case_when(
-      #This does not account for games where the maximum players is less than 0 because some have a min_players that is more than 1. 
-     max_players == 1~ "Singleplayer",
-     max_players >= 2 ~ "Multiplayer",
+      #Defining multiplayer as any game where total players can be more than 1. If a game is equal or fewer to 1 then it is singleplayer. 
+    total_players >= 2 ~ "Multiplayer",
+     total_players <= 1 ~ "Singleplayer",
         .default = NA
       )
   )
 #Group by player type and count the number of ratings. Also, a sum of the number of games considered multiplayer and singleplayer for context. 
 game_reviews |> group_by(player_type)|>
-  summarise("# of Ratings" = sum(users_rated), "# of Games" = n())
+  summarise(total_ratings = sum(users_rated), total_games = n(), "Average Ratings" = total_ratings/total_games)
   
 
 ```
 
 ### Sentence 4
 
--   **Sentence text**: What is the average number of games by age group?
+-   **Sentence text**: What years had the games owned by the most users?
 -   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
@@ -115,7 +131,7 @@ game_reviews |> group_by(player_type)|>
 
 ### Sentence 5
 
--   **Sentence text**: [Paste in sentence to engineer here]
+-   **Sentence text**: What are the domains with the highest average ratings?
 -   **Analysis summary**: [Write up two to three sentences describing the results of your analysis. Were you able to confirm the finding? If not, why not?]
 
 ```{r}
